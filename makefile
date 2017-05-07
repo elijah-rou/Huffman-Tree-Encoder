@@ -16,10 +16,17 @@ obj/%.o :src/%.cpp
 clean:
 	-rm obj/*.o
 	-rm bin/$(OUT)
+	-rm bin/output/*.txt
+	-rm bin/output/*.hdr
 
 run:
 	@make
-	bin/$(OUT)
+	bin/$(OUT) $(ARGS)
+
+quick:
+	@make
+	bin/$(OUT) hi.txt bye.txt 
+# ADD ARGUMENTS
 
 test: $(OBJ)
 	$(CC) $(TEST_FILES) -o bin/test --std=c++11
