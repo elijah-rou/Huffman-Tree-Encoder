@@ -90,7 +90,11 @@ bool RSSELI007::HuffmanTree::read(std::string inputFile){
 	std::ofstream file("bin/output/"+fileName, std::ios::out | std::ios::binary);
 	if (file.good()){
 		std::string str;
-		str = std::accumulate(begin(this->inputText), end(this->inputText), str);
+        for(std::string line : this->inputText){
+            for(char sym : line){
+                str += this->codes.at(sym);
+            }
+        }
 		file.write(str.c_str(), str.size());
 		file.close();
 	}

@@ -1,0 +1,10 @@
+Instructions:
+	Navigate to the project root
+	Run make to compile and link
+    The project will compile to bin/
+	make run args="<input_file> <output_file>" to run
+    make quick has predefined args
+	Input files should be placed in bin/input/
+	make clean will remove output, .o and executable files
+    make tester will compile and run the tests
+
