@@ -24,7 +24,6 @@ namespace RSSELI007{
     class HuffmanTree{
         private:
             // members
-            //std::string bitCodes;
             str_vector inputText;
             symFreq_map symbolFreq;
             symCode_map codes;
@@ -44,6 +43,8 @@ namespace RSSELI007{
         public:
             // members
             std::shared_ptr<HuffmanNode> rootNode;
+            // state of object's tree
+            bool grown;
 
             // constructors
             HuffmanTree();

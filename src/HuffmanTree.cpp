@@ -7,12 +7,16 @@
     HUFFMANTREE
 */
 // Constructors
-RSSELI007::HuffmanTree::HuffmanTree(){}
+RSSELI007::HuffmanTree::HuffmanTree() : grown(false){}
 
 RSSELI007::HuffmanTree::HuffmanTree(std::string & file){
 	if(read(file)){
 	    growTrie();
         genCodes(this->rootNode, "");
+        this->grown = true;
+    }
+    else{
+        this->grown = false;
     }
 }
 
@@ -23,15 +27,13 @@ RSSELI007::HuffmanTree::~HuffmanTree(){
 // Methods
 // read in an input file, storing the text by line and each character in a umap
 bool RSSELI007::HuffmanTree::read(std::string inputFile){
-    //std::cout << "STARt" << std::endl;
     std::ifstream file("bin/input/" + inputFile);
     std::string line;
     if(file.is_open()){
-        //std::cout << "file open" << std::endl;
         while (getline(file, line)) {
             this->inputText.push_back(line);
+            // for each symbol check map and adjust frequency
             for (char letter : line) {
-                //std::cout << letter << std::endl;
                 if (symbolFreq.find(letter) != symbolFreq.end()){
                     symbolFreq.at(letter) += 1;
                 } 
@@ -41,29 +43,22 @@ bool RSSELI007::HuffmanTree::read(std::string inputFile){
             }
 		}
 		file.close();
-        /*
-        for(auto k : symbolFreq){
-            std::cout << k.first << std::endl;
-            std::cout << k.second << std::endl;
-        }
-        */
-        //std::cout << "WAOW" << std::endl;
         return true;
     }
     else return false;
 }
 
  void RSSELI007::HuffmanTree::growTrie(){
+
     // build priority queue
     huffNode_queue nodes{RSSELI007::compareNode};
     for (const auto pair : this->symbolFreq) {
 	    nodes.push(new HuffmanNode(pair.first, pair.second));
     }
-     // loop until 1 node left
-     //std::cout << std::to_string(this->nodes.size()) << std::endl;
+
+     // loop through queue until 1 node left
      while (nodes.size() > 1){
 	    // obtain 2 minimum freq nodes
-        //std::cout << "sigh" << std::endl;
 		RSSELI007::HuffmanNode * leftNode = nodes.top();
 		nodes.pop();
 		RSSELI007::HuffmanNode * rightNode = nodes.top();
@@ -72,10 +67,9 @@ bool RSSELI007::HuffmanTree::read(std::string inputFile){
         // create parent node and push to queue
 		nodes.push(new HuffmanNode(leftNode->frequency + rightNode->frequency, leftNode, rightNode));
 	}
+    // assign last node in queue to root
 	this->rootNode = std::shared_ptr<HuffmanNode>(nodes.top());
  }
-
-// check is leaf
 
 // recursive function to print codes for symbols
  void RSSELI007::HuffmanTree::genCodes(std::shared_ptr<HuffmanNode> node, std::string code){
@@ -100,34 +94,35 @@ bool RSSELI007::HuffmanTree::read(std::string inputFile){
 		file.write(str.c_str(), str.size());
 		file.close();
 	}
+	size_t index;
 
-    // write frequency file
-    size_t index = fileName.find('.');
+	// write code header
+	index = fileName.find('.');
 	if (index != std::string::npos) {
-		fileName = "bin/output/" + fileName.substr(0, index) + "-freq.txt";
+        file.open("bin/output/"+fileName.substr(0, index)+".hdr");
 	}
-	file.open(fileName);
+    else{
+        file.open("bin/output/"+fileName+".hdr");
+    }
 	if (file.is_open()){
-        file << this->symbolFreq.size() << std::endl;
-		for(const auto pair : this->symbolFreq){
+        file << this->codes.size() << std::endl;
+		for(const auto pair : this->codes){
 			file << pair.first << '\t' << pair.second << std::endl;
 		}
 		file.close();
 	}
-	
-	// write header
-    //std::cout << "sigh" << std::endl;
-	index = fileName.find('-');
+
+    // write frequency map file
+    index = fileName.find('.');
 	if (index != std::string::npos) {
-		fileName = fileName.substr(0, index) + ".hdr";
+        file.open("bin/output/"+fileName.substr(0, index)+"-freq");
 	}
-    //std::cout << fileName << std::endl;
-	file.open(fileName);
-    //std::cout << "sigh" << std::endl;
+    else{
+        file.open("bin/output/"+fileName+"-freq");
+    }
 	if (file.is_open()){
-        //std::cout << "sigh" << std::endl;
-        file << this->codes.size() << std::endl;
-		for(const auto pair : this->codes){
+        file << this->symbolFreq.size() << std::endl;
+		for(const auto pair : this->symbolFreq){
 			file << pair.first << '\t' << pair.second << std::endl;
 		}
 		file.close();
