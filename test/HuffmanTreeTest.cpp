@@ -1,6 +1,7 @@
 #define CATCH_CONFIG_MAIN
 
 #include <iostream>
+#include <fstream>
 #include "../headers/catch.hpp"
 #include "../headers/HuffmanNode.h"
 #include "../headers/HuffmanTree.h"
@@ -11,6 +12,7 @@ std::string file("test.txt");
 HuffmanTree tree(file);
 
 TEST_CASE("Symbol-Freq map generation", "[node, freqMap]"){
+    // tests that sym-freq map is correct
     std::cout << std::endl << "Symbol-Freq map generation TEST" << std::endl;
     std::cout << "Checking input text size = 1" << std::endl;
     REQUIRE(tree.getInputText().size() == 1);
@@ -56,5 +58,50 @@ TEST_CASE("Huffman coding", "[tree]"){
         REQUIRE(tree.getCodeMap()['e'] == "1110");
         REQUIRE(tree.getCodeMap()['a'] == "1111");
         std::cout << "PASSED" << std::endl;
+    }
+}
+
+TEST_CASE("Saving", "[node, freqMap]"){
+    tree.save(file);
+    SECTION("Test encoding"){
+        std::cout << std::endl << "Encoding TEST" << std::endl;
+        std::cout << "Checking if correct string is generated" << std::endl;
+        std::ifstream out("bin/output/" + file);
+        std::string line;
+        if(out.is_open()){
+            getline(out, line);
+            REQUIRE(line == "1001100011001001100100111100101111001101");
+            std::cout << "PASSED" << std::endl;
+        }
+        out.close();
+    }
+    SECTION("Test header"){
+        size_t index = file.find('.');
+        std::ifstream out;
+        if (index != std::string::npos) {
+            std::cout << "bin/output/"+file.substr(0, index)+".hdr" << std::endl;
+            out.open("bin/output/"+file.substr(0, index)+".hdr");
+        }
+        else{
+            out.open("bin/output/" + file+".hdr");
+        }
+        std::cout << std::endl << "Header TEST" << std::endl;
+        if(out.is_open()){
+            std::cout << "Checking if no of fields = 8" << std::endl;
+            std::string line;
+            getline(out, line);
+            REQUIRE(line == "8");
+            std::cout << "PASSED" << std::endl;
+
+            std::cout << "Checking format" << std::endl;
+            while (getline(out, line)) {
+                REQUIRE(line.size() >=3);
+		    }
+            std::cout << "PASSED" << std::endl;
+        }
+        else{
+            std::cout << "FILE NOT FOUND" << std::endl;
+        }
+        out.close();
     }
 }
