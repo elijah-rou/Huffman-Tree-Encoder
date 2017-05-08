@@ -16,6 +16,7 @@ obj/%.o :src/%.cpp
 clean:
 	-rm obj/*.o
 	-rm bin/$(OUT)
+	-rm bin/test
 	-rm bin/output/*
 
 run:
