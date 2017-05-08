@@ -30,7 +30,7 @@ namespace RSSELI007{
     
     //Functions
 
-    bool compareNode(const HuffmanNode & a, const HuffmanNode & b);
+    bool compareNode(const HuffmanNode * a, const HuffmanNode * b);
 };
 
 #endif

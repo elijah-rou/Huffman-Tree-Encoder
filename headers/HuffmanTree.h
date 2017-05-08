@@ -13,7 +13,7 @@ namespace RSSELI007{
     typedef std::unordered_map<char, int> symFreq_map;
 
     // priority queue of huff nodes
-    typedef std::priority_queue<HuffmanNode*> huffNode_queue;
+    typedef std::priority_queue<HuffmanNode*, std::vector<HuffmanNode*>, decltype(&compareNode)> huffNode_queue;
 
     // symbol-code map
     typedef std::unordered_map<char, std::string> symCode_map;
@@ -27,7 +27,6 @@ namespace RSSELI007{
             //std::string bitCodes;
             str_vector inputText;
             symFreq_map symbolFreq;
-            huffNode_queue nodes;
             symCode_map codes;
 
             // methods
@@ -35,10 +34,7 @@ namespace RSSELI007{
             // read text file into a map
             bool read(std::string inputFile);
 
-            // generate a priority queue of HuffmanNodes based on frequency
-            void createQueue();
-
-            // create trie from queue of HuffmanNodes
+            // create trie from queue of HuffmanNodes using priority queue
             void growTrie();
 
             // generates code map
@@ -63,6 +59,10 @@ namespace RSSELI007{
             HuffmanTree & operator=(HuffmanTree &&obj);
 
             // methods
+            //getters
+            str_vector getInputText(void);
+            symFreq_map getFreqMap(void);
+            symCode_map getCodeMap(void);
 
             // save to an output file
             void save(std::string outputFile);

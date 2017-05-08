@@ -11,7 +11,6 @@ RSSELI007::HuffmanTree::HuffmanTree(){}
 
 RSSELI007::HuffmanTree::HuffmanTree(std::string & file){
 	if(read(file)){
-        createQueue();
 	    growTrie();
         genCodes(this->rootNode, "");
     }
@@ -54,36 +53,37 @@ bool RSSELI007::HuffmanTree::read(std::string inputFile){
     else return false;
 }
 
-void RSSELI007::HuffmanTree::createQueue(){
-    for (const auto pair : this->symbolFreq) {
-		this->nodes.push(new HuffmanNode(pair.first, pair.second));
-    }
- }
-
  void RSSELI007::HuffmanTree::growTrie(){
+    // build priority queue
+    huffNode_queue nodes{RSSELI007::compareNode};
+    for (const auto pair : this->symbolFreq) {
+	    nodes.push(new HuffmanNode(pair.first, pair.second));
+    }
      // loop until 1 node left
      //std::cout << std::to_string(this->nodes.size()) << std::endl;
-     while (this->nodes.size() > 1){
+     while (nodes.size() > 1){
 	    // obtain 2 minimum freq nodes
         //std::cout << "sigh" << std::endl;
-		RSSELI007::HuffmanNode * leftNode = this->nodes.top();
+		RSSELI007::HuffmanNode * leftNode = nodes.top();
 		nodes.pop();
-		RSSELI007::HuffmanNode * rightNode = this->nodes.top();
+		RSSELI007::HuffmanNode * rightNode = nodes.top();
 		nodes.pop();
 
         // create parent node and push to queue
 		nodes.push(new HuffmanNode(leftNode->frequency + rightNode->frequency, leftNode, rightNode));
 	}
-	this->rootNode = std::shared_ptr<HuffmanNode>(this->nodes.top());
+	this->rootNode = std::shared_ptr<HuffmanNode>(nodes.top());
  }
 
 // check is leaf
 
 // recursive function to print codes for symbols
  void RSSELI007::HuffmanTree::genCodes(std::shared_ptr<HuffmanNode> node, std::string code){
+     // base case
     if (!node){
         return;
     }
+    // if the node is a leaf, then assign code
     if (node->leaf){
         this->codes.insert({node->letter, code});
     }
@@ -132,6 +132,19 @@ void RSSELI007::HuffmanTree::createQueue(){
 		}
 		file.close();
 	}
+}
+
+// getters
+RSSELI007::str_vector RSSELI007::HuffmanTree::getInputText(void){
+    return this->inputText;
+}
+
+RSSELI007::symFreq_map RSSELI007::HuffmanTree::getFreqMap(void){
+    return this->symbolFreq;
+}
+
+RSSELI007::symCode_map RSSELI007::HuffmanTree::getCodeMap(void){
+    return this->codes;
 }
  
 

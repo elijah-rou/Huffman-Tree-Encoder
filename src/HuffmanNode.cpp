@@ -29,6 +29,6 @@ bool RSSELI007::operator<(const HuffmanNode & lhs, const HuffmanNode & rhs){
     return lhs.frequency < rhs.frequency;
 }
 // Functions
-bool RSSELI007::compareNode(const HuffmanNode & a, const HuffmanNode & b){
-    return a.frequency > b.frequency;
+bool RSSELI007::compareNode(const HuffmanNode * a, const HuffmanNode * b){
+    return a->frequency > b->frequency;
 }
